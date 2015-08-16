@@ -2,10 +2,10 @@
 
 namespace App\Components\Auth;
 
+use App\Models\City;
 use App\Models\User;
 use App\Models\UserSession;
 use T4\Mvc\Application;
-use T4\Core\Session;
 
 class Identity
     extends \T4\Auth\Identity
@@ -13,6 +13,8 @@ class Identity
     const  ERROR_INVALID_CAPTCHA = 102;
     const ERROR_INVALID_CODE = 103;
     const ERROR_INVALID_TIME = 104;
+    const ERROR_INVALID_FIRSTNAME = 105;
+    const ERROR_INVALID_LASTNAME = 106;
     const AUTH_COOKIE_NAME = 'T4auth';
 
     public function authenticate($data)
@@ -45,6 +47,8 @@ class Identity
             throw $errors;
 
         $this->login($user);
+        $user->lastvisit = date('Y-m-d H:i:s');
+        $user->save();
         Application::getInstance()->user = $user;
         return $user;
     }
@@ -70,7 +74,7 @@ class Identity
         return $session->user;
     }
 
-    public function register($data)
+    public function register($data, $roles = null)
     {
         $errors = new MultiException();
 
@@ -90,6 +94,21 @@ class Identity
             $errors->add('Введенные пароли не совпадают', self::ERROR_INVALID_PASSWORD);
         }
 
+        if (empty($data->firstName)) {
+            $errors->add('Не введено имя', self::ERROR_INVALID_FIRSTNAME);
+        }
+
+        if (empty($data->lastName)) {
+            $errors->add('Не введена фамилия', self::ERROR_INVALID_LASTNAME);
+        }
+
+        $app = Application::getInstance();
+        if ($app->config->extensions->captcha->register) {
+            if (empty($data->captcha)) {
+                $errors->add('Не введены символы с картинки', self::ERROR_INVALID_CAPTCHA);
+            }
+        }
+
         if (!$errors->isEmpty())
             throw $errors;
 
@@ -98,17 +117,9 @@ class Identity
             $errors->add('Такой e-mail уже зарегистрирован', self::ERROR_INVALID_EMAIL);
         }
 
-        if (!$errors->isEmpty())
-            throw $errors;
-
-        $app = Application::getInstance();
         if ($app->config->extensions->captcha->register) {
-            if (empty($data->captcha)) {
-                $errors->add('Не введена строка с картинки', self::ERROR_INVALID_CAPTCHA);
-            } else {
-                if (!$app->extensions->captcha->checkKeyString($data->captcha)) {
-                    $errors->add('Неверные символы с картинки', self::ERROR_INVALID_CAPTCHA);
-                }
+            if (!$app->extensions->captcha->checkKeyString($data->captcha)) {
+                $errors->add('Неверные символы с картинки', self::ERROR_INVALID_CAPTCHA);
             }
         }
 
@@ -118,6 +129,27 @@ class Identity
         $user = new User();
         $user->email = $data->email;
         $user->password = \T4\Crypt\Helpers::hashPassword($data->password);
+        $user->firstName = $data->firstName;
+        $user->lastName = $data->lastName;
+
+        /**
+         * Временное решение - связываем человека с городом, являющимся центром региона
+         */
+        $city = isset($data->district) ?
+            City::find(['where' => '__district_id=:district AND isCenter', 'params' => [':district' => $data->district]]) :
+            null;
+        if (null !== $city) {
+            $user->city = $city;
+        }
+
+        $user->msisdn = $data->msisdn;
+
+        if (null !== $roles) {
+            $user->roles = $roles;
+        }
+
+        $user->registered = date('Y-m-d H:i:s');
+
         $user->save();
 
         return $user;

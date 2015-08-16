@@ -1,0 +1,27 @@
+<form class="form-horizontal" role="form" action="/user/msisdn" method="post">
+    <input type="hidden" name="do" value="1">
+
+    <div class="form-group">
+        <label for="msisdn" class="col-sm-2 control-label">Ваш номер телефона</label>
+
+        <div class="col-sm-1">
+            <select class="form-control" name="countryCode">
+                <option value="+7" selected id="countryCode">+7</option>
+            </select>
+        </div>
+        <div class="col-sm-9">
+            <input type="tel" pattern="^[\s\d\-\(\)]+$" class="form-control" id="msisdn" name="msisdn"
+                   placeholder="Ваш номер телефона " value="{{msisdn}}">
+            <span class="help-block"><small>Введите телефон в формате &quot;000 000-00-00&quot;, без кода страны.
+                Пробелы, дефисы и скобки необязательны.
+            </small></span>
+        </div>
+        <footer class="col-sm-offset-2 col-sm-10">
+            <div id="dialogue">
+                <input type="text" id="input_code" name="codeconfirmation" value=""
+                       placeholder="Код подтверждения" autofocus="">
+                <input type="submit" id="savemsisdn" class="btn btn-success" value="Сохранить">
+            </div>
+        </footer>
+    </div>
+</form>

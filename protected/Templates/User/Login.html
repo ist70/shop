@@ -1,11 +1,14 @@
-{% extends "Index.html" %}
+{% extends "Assan-1.7.5/blank.html" %}
 
 {% block content %}
 
 <h2>Вход на сайт</h2>
 
 {% for error in errors %}
-<div class="alert alert-danger" role="alert">{{error.message}}</div>
+<div class="alert alert-danger ">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{error.message}}
+</div>
 {% endfor %}
 
 {% if not app.user %}

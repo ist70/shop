@@ -1,0 +1,43 @@
+{% extends "Assan-1.7.5/blank.html" %}
+
+{% block header %}
+{% if app.user and app.user.hasRole('learner') %}
+Здравствуйте, {{app.user.firstName}}
+{% else %}
+Добро пожаловать!
+{% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="/"><i class="glyphicon glyphicon-home"></i></a></li>
+<li><a href="/learner">Личный кабинет студента</a></li>
+<li>Интересы</li>
+{% endblock %}
+
+{% block content %}
+
+<h2 class="page-header" style="margin-top: 0">Интересы</h2>
+
+<div class="row">
+    <div class="col-xs-12">
+        <p>Указание ваших интересов поможет предложить вам наиболее подходящие курсы и программы обучения.</p>
+        <h3>Выбрано интересов: {{app.user.interests.count}}</h3>
+        <h4>Выбрать интересы:</h4>
+        <form action="/user/interests/" method="post">
+            <input type="hidden" name="do" value="1">
+            <ul class="list-group">
+                {% for interest in interests %}
+                <li class="list-group-item" style="margin-left:{{20*interest.__lvl}}px;">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="interests[]" value="{{interest.Pk}}"{% if app.user.hasInterest(interest) %} checked{% endif %}>
+                        {{interest.title}}
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

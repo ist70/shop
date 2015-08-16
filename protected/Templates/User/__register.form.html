@@ -1,20 +1,58 @@
-<form class="form-horizontal" role="form" action="/user/register.html" method="post">
+<form class="form-horizontal" role="form" action="{{action}}" method="post">
+
     <div class="form-group">
-        <label for="register[email]" class="col-sm-2 control-label">E-mail</label>
+        <label for="register[email]" class="col-sm-2 control-label">E-mail *</label>
         <div class="col-sm-10">
-            <input type="email" class="form-control" id="register[email]" name="register[email]" placeholder="Ваш адрес e-mail" value="{{email}}">
+            <input type="email" class="form-control input-lg" id="register[email]" name="register[email]" placeholder="Ваш адрес e-mail" value="{{email}}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="register[firstName]" class="col-sm-2 control-label">Имя *</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control input-lg" id="register[firstName]" name="register[firstName]" placeholder="Ваше имя" value="{{firstName}}">
         </div>
     </div>
     <div class="form-group">
-        <label for="register[password]" class="col-sm-2 control-label">Пароль</label>
+        <label for="register[lastName]" class="col-sm-2 control-label">Фамилия *</label>
         <div class="col-sm-10">
-            <input type="password" class="form-control" id="register[password]" name="register[password]" placeholder="Ваш пароль">
+            <input type="text" class="form-control input-lg" id="register[lastName]" name="register[lastName]" placeholder="Ваша фамилия" value="{{lastName}}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="register[city]" class="col-sm-2 control-label">Регион и город</label>
+        <div class="col-sm-5">
+            {{ selectTreeByModel("App\\Models\\District", district, {"null":false}, {"id":"district", "name":"register[district]", "class": "form-control"}) }}
+        </div>
+        <div class="col-sm-5">
+            <input type="text" class="form-control" id="register[city]" name="register[city]" placeholder="Город" value="{{city.title}}" readonly>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="msisdn" class="col-sm-2 control-label">Номер телефона</label>
+        <div class="col-sm-1">
+            <select class="form-control" name="countryCode">
+                <option value="+7" selected>+7</option>
+            </select>
+        </div>
+        <div class="col-sm-9">
+            <input type="tel" pattern="^[\s\d\-\(\)]+$" class="form-control" id="msisdn" name="msisdn" placeholder="Ваш номер телефона " value="{{msisdn}}">
+            <span class="help-block"><small>Введите телефон в формате &quot;000 000-00-00&quot;, без кода страны. Пробелы, дефисы и скобки необязательны.</small></span>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="register[password]" class="col-sm-2 control-label">Пароль *</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control input-lg" id="register[password]" name="register[password]" placeholder="Ваш пароль">
         </div>
     </div>
     <div class="form-group">
-        <label for="register[password2]" class="col-sm-2 control-label">Повтор пароля</label>
+        <label for="register[password2]" class="col-sm-2 control-label">Повтор пароля *</label>
         <div class="col-sm-10">
-            <input type="password" class="form-control" id="register[password2]" name="register[password2]" placeholder="Введите пароль еще раз">
+            <input type="password" class="form-control input-lg" id="register[password2]" name="register[password2]" placeholder="Введите пароль еще раз">
         </div>
     </div>
 
@@ -26,15 +64,20 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="register[captcha]" class="col-sm-2 control-label">Вы не робот ?</label>
+        <label for="register[captcha]" class="col-sm-2 control-label">Вы не робот ? *</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="register[captcha]" name="register[captcha]" placeholder="Введите символы с картинки">
+            <input type="text" class="form-control input-lg" id="register[captcha]" name="register[captcha]" placeholder="Введите символы с картинки">
         </div>
     </div>
     {% endif %}
 
-    <footer class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+    <footer class="row">
+        <div class="col-sm-2">
+            * - обязательные для заполнения поля
+        </div>
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+        </div>
     </footer>
 
 </form>

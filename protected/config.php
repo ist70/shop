@@ -5,7 +5,7 @@ return [
         'default' => [
             'driver' => 'mysql',
             'host' => 'localhost',
-            'dbname' => 'standard',
+            'dbname' => 'shop',
             'user' => 'root',
             'password' => '',
         ]
