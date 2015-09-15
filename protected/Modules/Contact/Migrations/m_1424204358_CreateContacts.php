@@ -28,7 +28,7 @@ class m_1424204358_CreateContacts
 
     public function down()
     {
-        $this->dropTable('contact');
+        $this->dropTable('contacts');
     }
 
 }
