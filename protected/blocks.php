@@ -94,4 +94,23 @@ return [
         'desc' => 'Форма обратной связи модуля Контакты',
         'options' => [],
     ],
+
+    /**
+     * Product module
+     */
+
+    '/Products//One' => [
+        'title' => 'Товар',
+        'desc' => 'Выбранный по ID товар',
+        'options' => [
+            'id' => [
+                'title' => 'Товар',
+                'type' => 'select:model',
+                'model' => \App\Modules\Products\Models\Product::class,
+                'default' => 1,
+                'cache' => ['time' => 60],
+            ]
+        ],
+
+    ],
 ];

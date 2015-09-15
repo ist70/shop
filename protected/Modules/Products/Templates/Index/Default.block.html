@@ -1,0 +1,7 @@
+{% for product in products %}
+<h4><a href="/news/{{product.Pk}}.html">{{product.title}}</a></h4>
+<div class="clearfix">
+    {% if product.image %}<img src="{{product.image}}" class="pull-left img-responsive" style="max-width: 200px; max-height: 300px; margin-right: 10px !important;">{% endif %}
+    {{product.shortdescription}}
+</div>
+{% endfor %}

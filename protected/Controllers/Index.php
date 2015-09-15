@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use T4\Mvc\Controller;
+use App\Components\Import;
+
 
 class Index
     extends Controller
@@ -23,6 +25,12 @@ class Index
         }
         $this->app->extensions->captcha->generateImage($config);
         die;
+    }
+
+    public function actionImport()
+    {
+        $xml = new Import();
+        $xml->importXmlData(__DIR__ . '/../../Catalog.xml'); die;
     }
 
 }

@@ -1,0 +1,133 @@
+{% extends "Assan-1.7.5/blank.html" %}
+
+{% block header %}
+Здравствуйте{% if app.user.firstName %}, {{app.user.firstName}}{% endif %}!
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="/"><i class="glyphicon glyphicon-home"></i></a></li>
+<li><a href="/user/">Профиль пользователя</a></li>
+<li>Аватар</li>
+{% endblock %}
+
+{% block content %}
+
+{{ publish('/Layouts/assets/jcrop/') }}
+<link rel="stylesheet" href="{{ asset('/Layouts/assets/jcrop/css/jquery.Jcrop.css') }}" type="text/css" />
+
+<h2 class="page-header" style="margin-top: 0">Аватар (изображение профиля)</h2>
+
+<p class="lead">Лучший выбор для аватара - Ваша фотография. Старайтесь избегать изображений животных, мультипликационных персонажей или абстрактных изображений.</p>
+<p>Загружайте файлы форматов JPEG или PNG. Не стоит загружать аватар размером более 400 пикселов по горизонтали или вертикали - он будет автоматически приведен к этому размеру.</p>
+
+<div class="row">
+    <div class="col-xs-3">
+        <h3 class="heading">Аватар</h3>
+        {% if app.user.avatar %}
+        <img src="{{app.user.avatar}}" class="img-responsive img-thumbnail img-circle" />
+        <hr>
+        <button class="btn btn-block btn-danger"><i class="glyphicon glyphicon-remove"></i> Удалить аватар</button>
+        {% else %}
+        <p class="well text-center">Пока не загружен</p>
+        {% endif %}
+    </div>
+    <div class="col-xs-9">
+
+        <h3 class="heading">Загрузить</h3>
+
+        <div id="uploaded"></div>
+
+        <form id="sendFile" class="form-horizontal" method="post" enctype="multipart/form-data" action="/user/loadAvatar.json">
+            <div id="uploadFileButton" class="form-group">
+                <label for="avatar" class="col-sm-2 control-label">Загрузите файл</label>
+                <div class="col-sm-10">
+                    {{element('simplefile', 'avatar', {}, {'class': 'form-control'})}}
+                </div>
+            </div>
+            <div id="sendFileButton" class="form-group">
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-block btn-success">Отправить</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block pagescript %}
+<script src="{{ asset('/Layouts/assets/jcrop/js/jquery.Jcrop.min.js') }}"></script>
+<script type="text/javascript">
+    $(function () {
+        $('form#sendFile').on('submit', function(e) {
+
+            $.ajax({
+                url: '/user/loadAvatar.json',
+                type: 'POST',
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                success: function (data) {
+
+                    if (data.result) {
+                        var img = data.image;
+                        $('#uploaded').empty().append(
+                                $(
+                                '<p>Выберите область изображения, которая станет Вашим аватаром:</p>' +
+                                '<img id="uploadedImage" src="' + img + '" class="img-responsive">' +
+                                '<br>' +
+                                '<a href="#" id="sendCroppedFile" class="btn btn-block btn-success">Обрезка закончена. Установить аватар.</a>'
+                                )
+                        );
+                        $('#uploadFileButton').hide();
+                        $('#sendFileButton').hide();
+
+                        $('#uploadedImage').load(function() {
+                            var width = $(this).width();
+                            var height = $(this).height();
+                            var minDimesion = width < height ? width : height;
+                            var cropAPI;
+                            $('#uploadedImage').Jcrop({
+                                aspectRatio: 1,
+                                minSize: [50, 50],
+                                setSelect: [0, 0, minDimesion, minDimesion]
+                            }, function () {
+                                cropAPI = this;
+                            });
+
+                            $('#sendCroppedFile').click(function (e) {
+                                e.preventDefault();
+
+                                $.post('/user/setAvatar.json', {
+                                    img: img,
+                                    width: width,
+                                    cropX: cropAPI.tellScaled().x,
+                                    cropY: cropAPI.tellScaled().y,
+                                    cropW: cropAPI.tellScaled().w,
+                                    cropH: cropAPI.tellScaled().h
+                                }, function (data) {
+                                    if (data.result) {
+                                        window.location.href = '/user/';
+                                    } else {
+                                        alert(data.error);
+                                    }
+                                });
+
+                            });
+
+                        });
+
+                    } else {
+                        alert(data.error);
+                    }
+
+                }
+            });
+
+            e.preventDefault();
+
+        });
+    });
+</script>
+{% endblock %}
