@@ -1,0 +1,19 @@
+<div class="col-md-4 col-sm-6 margin30">
+    <div class="footer-col">
+        <h3>Присоединяйтесь!</h3>
+        <p>
+            Измените свою жизнь сегодня! Станьте студентом &laquo;Академии программирования ПрофИТ&raquo;!
+        </p>
+        <div class="divide25"></div>
+        <p><img src="{{ asset('/Layouts/img/logo.png') }}" alt="ProfIT"></p>
+        <form role="form" class="subscribe-form" action="/learner/register" method="post">
+            <input type="hidden" name="do" value="0">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Введите Ваш e-mail" name="register[email]">
+                <span class="input-group-btn">
+                    <button class="btn  btn-theme-dark btn-lg" type="submit">Да!</button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>

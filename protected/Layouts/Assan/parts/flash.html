@@ -1,0 +1,29 @@
+{% if app.flash is defined %}
+<div class="container">
+    {% if app.flash.message is defined %}
+    <div class="alert alert-success" style="margin-top: 5px; margin-bottom: 5px;">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{app.flash.message|raw}}
+    </div>
+    {% endif %}
+    {% if app.flash.reminders is defined %}
+    {% set reminders=app.flash.reminders %}
+    {% for key, flash in reminders %}
+    <div class="alert alert-info" style="margin-top: 5px; margin-bottom: 5px;">
+        <button type="button" class="close" data-dismiss="alert" data-key="{{key}}" onclick="dismissReminder('{{key}}');return true;">&times;</button>
+        {{flash.text|raw}}
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endif %}
+
+<script type="text/javascript">
+    function dismissReminder(key) {
+        $.post('/dismissReminder.json', {key: key}, function (r) {
+            if (!r.result) {
+                alert(r.error);
+            }
+        });
+    }
+</script>
